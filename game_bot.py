@@ -19,7 +19,8 @@ for event in longpoll.listen():
                              message=('What would you like to see at the moment: \n'
                                      'WEATHER \n'
                                      'TIME \n'
-                                     'TRANSLATOR'))
+                                     'TRANSLATOR \n'
+                                      ''у))
             if event.text == 'Переводчик' or event.text.upper() == 'TRANSLATOR':
                 if event.from_user:
                     # сообщения
@@ -131,22 +132,39 @@ for event in longpoll.listen():
                                                            params={'id': city_id, 'units': 'metric', 'lang': 'ru',
                                                                    'APPID': app_id})
                                         data = res.json()
+                                        if event.from_user:
+                                            vk.messages.send(user_id=event.user_id,
+                                                                    message=f"conditions: "
+                                                                            f"{data['weather'][0]['description']}")
 
-                                        vk.messages.send(user_id=event.user_id,
-                                                                 message=f"conditions: "
-                                                                         f"{data['weather'][0]['description']}")
+                                            vk.messages.send(user_id=event.user_id,
+                                                            message=f"temperature: "
+                                                                    f"{data['main']['temp']}")
 
-                                        vk.messages.send(user_id=event.user_id,
-                                                         message=f"temperature: "
-                                                                 f"{data['main']['temp']}")
+                                            vk.messages.send(user_id=event.user_id,
+                                                            message=f" minimum temperature: "
+                                                                    f"{data['main']['temp _min']}")
 
-                                        vk.messages.send(user_id=event.user_id,
-                                                         message=f" minimum temperature: "
-                                                                 f"{data['main']['temp _min']}")
+                                            vk.messages.send(user_id=event.user_id,
+                                                            message=f" maximum temperature: "
+                                                                    f"{data['main']['temp _max']}")
 
-                                        vk.messages.send(user_id=event.user_id,
-                                                         message=f" maximum temperature: "
-                                                                 f"{data['main']['temp _max']}")
+                                        if event.from_chat:
+                                            vk.messages.send(user_id=event.chat_id_id,
+                                                             message=f"conditions: "
+                                                                     f"{data['weather'][0]['description']}")
+
+                                            vk.messages.send(user_id=event.chat_id,
+                                                             message=f"temperature: "
+                                                                     f"{data['main']['temp']}")
+
+                                            vk.messages.send(user_id=event.chat_id,
+                                                             message=f" minimum temperature: "
+                                                                     f"{data['main']['temp _min']}")
+
+                                            vk.messages.send(user_id=event.chat_id,
+                                                             message=f" maximum temperature: "
+                                                                     f"{data['main']['temp _max']}")
 
 
                                     except Exception as e:
@@ -163,10 +181,17 @@ for event in longpoll.listen():
                                                 print(i['dt_txt'], '{0:+3.0f}'.format(i['main']['temp']),
                                                       i['weather'][0]['description'])
 
-                                                vk.messages.send(user_id=event.user_id,
-                                                                 message=f"{i['dt_txt']} "
-                                                                         f"{'{0:+3.0f}'.format(i['main']['temp'])} "
-                                                                         f"{i['weather'][0]['description']}")
+                                                if event.from_user:
+                                                    vk.messages.send(user_id=event.user_id,
+                                                                    message=f"{i['dt_txt']} "
+                                                                            f"{'{0:+3.0f}'.format(i['main']['temp'])} "
+                                                                            f"{i['weather'][0]['description']}")
+
+                                                if event.from_chat:
+                                                    vk.messages.send(user_id=event.chat_id,
+                                                                    message=f"{i['dt_txt']} "
+                                                                            f"{'{0:+3.0f}'.format(i['main']['temp'])} "
+                                                                            f"{i['weather'][0]['description']}")
 
 
                                         except Exception as e:
