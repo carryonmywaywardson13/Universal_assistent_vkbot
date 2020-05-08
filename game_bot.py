@@ -6,7 +6,7 @@ import pytz
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 
-vk_session = vk_api.VkApi(token='токен с доступом к сообщениям и фото')
+vk_session = vk_api.VkApi(token='3db404cca9293537d5090a80167c6cbe9823e858bd95a021372a1f60e6266f37dfa3b6f8660435691201e')
 translator = Translator()
 longpoll = VkLongPoll(vk_session)
 
