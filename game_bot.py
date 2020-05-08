@@ -6,9 +6,11 @@ import pytz
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 
+
 vk_session = vk_api.VkApi(token='3db404cca9293537d5090a80167c6cbe9823e858bd95a021372a1f60e6266f37dfa3b6f8660435691201e')
 translator = Translator()
 longpoll = VkLongPoll(vk_session)
+vk = vk_session.get_api()
 
 for event in longpoll.listen():
     vk.messages.send(user_id=event.user_id, message='Hi! I am your personal assistant. To get started, write: "Start"')
@@ -17,20 +19,22 @@ for event in longpoll.listen():
         if event.text == 'Start':
             vk.messages.send(user_id=event.user_id,
                              message=('What would you like to see at the moment: \n'
-                                     'WEATHER \n'
-                                     'TIME \n'
+                                     'WEATHER\n'
+                                     'TIME\n'
                                      'TRANSLATOR'))
             if event.text == 'Переводчик' or event.text.upper() == 'TRANSLATOR':
                 if event.from_user:
                     # сообщения
                     vk.messages.send(user_id=event.user_id,
-                                     message='What is the language? Use two letters.\n For example: Russian - ru, English - en')
+                                     message='What is the language? Use two letters.\n '
+                                             'For example: Russian - ru, English - en')
                 elif event.from_chat:
                     # фразы
                     vk.messages.send(chat_id=event.chat_id,
-                                     message='What is the language? Use two letters.\n For example: Russian - ru, English - en')
+                                     message='What is the language? Use two letters.\n '
+                                             'For example: Russian - ru, English - en')
                 exit1 = 0
-                for vent in longpoll.listen():
+                for event in longpoll.listen():
                     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
                         save_tr = event.text
                         if event.from_user:
