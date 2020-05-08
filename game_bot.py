@@ -19,8 +19,7 @@ for event in longpoll.listen():
                              message=('What would you like to see at the moment: \n'
                                      'WEATHER \n'
                                      'TIME \n'
-                                     'TRANSLATOR \n'
-                                      ''у))
+                                     'TRANSLATOR'))
             if event.text == 'Переводчик' or event.text.upper() == 'TRANSLATOR':
                 if event.from_user:
                     # сообщения
