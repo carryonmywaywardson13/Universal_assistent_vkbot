@@ -1,4 +1,3 @@
-import vk
 from googletrans import Translator
 import requests
 from datetime import datetime
