@@ -201,9 +201,11 @@ for event in longpoll.listen():
                                             print("Exception (forecast):", e)
                                             pass
 
+
             if event.text.upper == 'ВРЕМЯ' or event.text.upper() == 'TIME':
                 vk.messages.send(user_id=event.user_id,
                                  message="Time in which city would you like to get?")
+
                 for event in longpoll.listen():
                     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
                         city_n_hour = event.type
@@ -220,13 +222,3 @@ for event in longpoll.listen():
 
                             vk.messages.send(user_id=event.user_id,
                                              message=f"Time in {city_n_hour}: " + str(current_datetime))
-
-
-
-
-
-
-
-
-
-
