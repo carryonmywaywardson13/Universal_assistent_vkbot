@@ -1,8 +1,5 @@
 from random import random
-
-from googletrans import Translator
-import googletrans
-
+from yandex_translate import YandexTranslate
 import requests
 import random
 from datetime import datetime
@@ -10,11 +7,11 @@ import pytz
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 
-
+# trnsl.1.1.20200511T130644Z.6364d76cfdc43982.a4f1928c9916bafa41bcc6b8ee1e32fd790ba287
 def main_tr():
     vk_session = vk_api.VkApi(
         token='3db404cca9293537d5090a80167c6cbe9823e858bd95a021372a1f60e6266f37dfa3b6f8660435691201e')
-    translator = Translator()
+    translate = YandexTranslate('trnsl.1.1.20200511T130644Z.6364d76cfdc43982.a4f1928c9916bafa41bcc6b8ee1e32fd790ba287')
     longpoll = VkBotLongPoll(vk_session, 195107797)
     vk = vk_session.get_api()
 
@@ -22,7 +19,7 @@ def main_tr():
     session['index_id'] = 0
     for event in longpoll.listen():
         if event.type == VkBotEventType.MESSAGE_NEW:
-            '''if session['index_id'] != 1:
+            if session['index_id'] != 1:
                 vk.messages.send(user_id=event.obj.message['from_id'],
                                 message='Hi! I am your personal assistant. To get started, write: "Start"',
                                 random_id=random.randint(0, 2 ** 64))
@@ -32,7 +29,7 @@ def main_tr():
                                  message=('What would you like to see at the moment: \n'
                                           'WEATHER\n'
                                           'TIME\n'
-                                          'TRANSLATOR'), random_id=random.randint(0, 2 ** 64))'''
+                                          'TRANSLATOR'), random_id=random.randint(0, 2 ** 64))
 
 
 
@@ -42,32 +39,43 @@ def main_tr():
                                 message='What is the language? Use two letters.\n '
                                         'For example: Russian - ru, English - en',
                                 random_id=random.randint(0, 2 ** 64))
-            exit1 = 0
+                flag = 0  # Шаманский танец для выхода из 2-х циклов
 
-            if event.object.message['text'].lower() in googletrans.LANGUAGES:
-                save_tr = event.object.message['text']
-                vk.messages.send(user_id=event.obj.message['from_id'],
-                                 message='Enter the phrase to translate ',
-                                 random_id=random.randint(0, 2 ** 64))
+                '''if event.type == VkBotEventType.MESSAGE_NEW:  # Если получили сообщение с текстом
+                    trTo = event.object.message['text']
+                    vk.messages.send(  # Отправляем сообщение
+                        user_id=event.obj.message['from_id'],
+                        message='Введите фразу, которую надо перевести ', random_id=random.randint(0, 2 ** 64)
+                    )
 
-            if not(event.object.message['text'].lower()) in googletrans.LANGUAGES\
-                    and len(event.object.message['text'].lower()) != 0:
-                Error_tr = 1
-                try:
-                    # переводим на данный язык
-                    result = translator.translate(save_tr, dest=event.obj.message['from_id'])
+                if event.type == VkBotEventType.MESSAGE_NEW:  # Если получили сообщение с текстом
+                    trNormal = 1  # Колхозный флаг для ошибки
+                    try:  # Исключение, о них поговорим ниже
+                        trFrom = translate.detect(event.obj.message['text'])
+                        trResult = translate.translate(event.obj.message['text'], trFrom + '-' + trTo)
+                    except Exception as e:
+                        trNormal = 0
+                        print("Exception:", e)
+                        pass
+                    if trNormal == 1:
+                        vk.messages.send(
+                            user_id=event.obj.message['from_id'],
+                            message='Переведено сервисом «Яндекс.Переводчик» translate.yandex.ru\n' + str(
+                                trResult['text'], random_id=random.randint(0, 2 ** 64))
+                        )
+                        flag = 1
+                        break
 
-                except Exception as e:
-                    # если не заработало
-                    Error_tr = 0
-                    print("Exception:", e)
-                    pass
+                    if trNormal == 0:
+                        vk.messages.send(
+                            user_id=event.obj.message['from_id'],
+                            message='Неправильно введён язык', random_id=random.randint(0, 2 ** 64)
+                        )
+                        flag = 1
+                        break
 
-                if Error_tr == 1:
-                    vk.messages.send(user_id=event.obj.message['from_id'],
-                                     message='translated by Google Translator\n' + str(result),
-                                     random_id=random.randint(0, 2 ** 64))
-
+                if flag == 1:
+                    break'''
 
 def main_time():
     vk_session = vk_api.VkApi(
@@ -189,17 +197,10 @@ def main_weather():
                                 pass
 
 
-vk_session = vk_api.VkApi(
-        token='3db404cca9293537d5090a80167c6cbe9823e858bd95a021372a1f60e6266f37dfa3b6f8660435691201e')
-    translator = Translator()
-    longpoll = VkBotLongPoll(vk_session, 195107797)
-    vk = vk_session.get_api()
-
-running = True
-
-while running:
-
 
 
 if __name__ == '__main__':
     main_tr()
+    main_time()
+    main_weather()
+
